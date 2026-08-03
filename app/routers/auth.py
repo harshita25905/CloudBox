@@ -6,6 +6,7 @@ from app.schemas.user import UserCreate, UserResponse, UserLogin
 from app.crud.user import create_user, get_user_by_email
 from app.core.jwt import create_access_token
 from app.core.security import verify_password
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(
     prefix="/auth",
@@ -50,11 +51,11 @@ def test_token():
 
 @router.post("/login")
 def login(
-    user: UserLogin,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
 
-    db_user = get_user_by_email(db, user.email)
+    db_user = get_user_by_email(db, form_data.username)
 
     if not db_user:
         raise HTTPException(
@@ -63,7 +64,7 @@ def login(
         )
 
     if not verify_password(
-        user.password,
+        form_data.password,
         db_user.hashed_password
     ):
         raise HTTPException(
