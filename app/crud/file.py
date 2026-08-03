@@ -24,3 +24,8 @@ def get_file_by_id(db:Session, file_id:int):
     return db.query(File).filter(
         File.id ==file_id
     ).first()
+
+def delete_file_record(db: Session, db_file: File):
+
+    db.delete(db_file)
+    db.commit()

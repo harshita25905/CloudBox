@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.core.dependencies import get_current_user
-from app.crud.file import create_File, get_user_files, get_file_by_id
+from app.crud.file import create_File, get_user_files, get_file_by_id, delete_file_record
 from app.schemas.file import FileResponse
 
 router = APIRouter(
@@ -99,3 +99,33 @@ def download_file(
         path= db_file.file_path,
         filename=db_file.filename
     )
+
+@router.delete("/{file_id}/delete")
+def delete_uploaded_file(
+    file_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    db_file = get_file_by_id(db,file_id)
+
+    if db_file is None:
+        raise HTTPException(
+                    status_code=404,
+                    detail="File not found"
+                )
+
+    if db_file.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=403,
+                detail="You are not authorised to delete this file"
+            )
+
+    if os.path.exists(db_file.file_path):
+        os.remove(db_file.file_path)
+
+
+    delete_file_record(db, db_file)
+
+    return{
+        "message":"File deleted successfully"
+    }
