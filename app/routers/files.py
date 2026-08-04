@@ -11,6 +11,7 @@ from app.db.database import get_db
 from app.core.dependencies import get_current_user
 from app.crud.file import create_File, get_user_files, get_file_by_id, delete_file_record
 from app.schemas.file import FileResponse
+from app.services.s3 import upload_file as upload_to_s3, generate_download_url, delete_from_s3
 
 router = APIRouter(
     prefix="/files",
@@ -36,10 +37,20 @@ async def upload_file(
         unique_filename
     )
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    # with open(file_path, "wb") as buffer:
+    #     shutil.copyfileobj(file.file, buffer)
 
-    file_size = os.path.getsize(file_path)
+    file.file.seek(0, 2)      # Move to end
+    file_size = file.file.tell()
+    file.file.seek(0)         # Move back to beginning
+
+    upload_to_s3(
+        file.file,
+        unique_filename
+    )
+
+
+    # file_size = os.path.getsize(file_path)
 
     db_file = create_File(
     db,
@@ -48,7 +59,7 @@ async def upload_file(
 
     stored_filename=unique_filename,
 
-    file_path=file_path,
+    file_path=unique_filename,
 
     file_size=file_size,
 
@@ -95,10 +106,18 @@ def download_file(
             detail="You are not authorised to access this file"
         )
 
-    return FastAPIFileResponse(
-        path= db_file.file_path,
-        filename=db_file.filename
+    # return FastAPIFileResponse(
+    #     path= db_file.file_path,
+    #     filename=db_file.filename
+    # )
+
+    download_url = generate_download_url(
+        db_file.file_path
     )
+
+    return {
+        "download_url":download_url
+    }
 
 @router.delete("/{file_id}/delete")
 def delete_uploaded_file(
@@ -120,9 +139,12 @@ def delete_uploaded_file(
                 detail="You are not authorised to delete this file"
             )
 
-    if os.path.exists(db_file.file_path):
-        os.remove(db_file.file_path)
+    # if os.path.exists(db_file.file_path):
+    #     os.remove(db_file.file_path)
 
+    delete_from_s3(
+         db_file.file_path
+    )
 
     delete_file_record(db, db_file)
 
