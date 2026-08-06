@@ -48,6 +48,35 @@ app/
 
 ---
 
+# 🏗️ Architecture
+
+```text
+                    +------------------+
+                    |      Client      |
+                    +------------------+
+                             |
+                             | HTTP Requests
+                             ▼
+                    +------------------+
+                    |     FastAPI      |
+                    |   REST Backend   |
+                    +------------------+
+                             |
+          +------------------+------------------+
+          |                                     |
+          ▼                                     ▼
++------------------------+          +------------------------+
+|     PostgreSQL DB      |          |       AWS S3 Bucket    |
+|                        |          |                        |
+| User Information       |          | Uploaded Files        |
+| File Metadata          |          | PDFs, Images, Docs    |
+| Authentication Data    |          | Secure Object Storage |
++------------------------+          +------------------------+
+```
+
+---
+
+
 ## Installation
 
 ```bash
