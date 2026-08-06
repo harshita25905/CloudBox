@@ -1,32 +1,100 @@
-# CloudBox
+#  CloudBox
 
-Secure File Sharing API built with FastAPI.
+CloudBox is a secure cloud file storage backend built using FastAPI. It provides JWT-based authentication, AWS S3 file storage, PostgreSQL metadata management, and Dockerized deployment.
+
+---
 
 ## Features
-- JWT Authentication
+
 - User Registration & Login
-- PostgreSQL
-- SQLAlchemy ORM
-- Alembic Migrations
-- Password Hashing (bcrypt)
-- REST APIs
+- JWT Authentication
+- Secure Password Hashing
+- Upload Files to AWS S3
+- Download Files using Presigned URLs
+- Delete Files
+- PostgreSQL Database
+- Docker & Docker Compose Support
+
+---
 
 ## Tech Stack
+
 - FastAPI
 - PostgreSQL
 - SQLAlchemy
 - Alembic
-- Pydantic
+- AWS S3
 - JWT
-- Passlib
+- Docker
+- Docker Compose
+- Boto3
+
+---
 
 ## Project Structure
-(app folder tree)
+
+```text
+app/
+│
+├── core/
+├── crud/
+├── db/
+├── models/
+├── routers/
+├── schemas/
+├── services/
+└── main.py
+```
+
+---
 
 ## Installation
-(commands)
+
+```bash
+git clone <repo-url>
+
+cd CloudBox
+
+cp .env.example .env
+
+docker compose up --build
+```
+
+---
 
 ## API Endpoints
+
+### Authentication
+
 POST /auth/register
+
 POST /auth/login
-...
+
+---
+
+### Files
+
+POST /files/upload
+
+GET /files
+
+GET /files/{id}/download
+
+DELETE /files/{id}/delete
+
+---
+
+## Future Improvements
+
+- Folder support
+- File sharing
+- Password Reset
+- Email Verification
+- CI/CD Pipeline
+- Deployment on AWS EC2
+  
+---
+
+## Author
+
+Harshita Sharma
