@@ -25,6 +25,10 @@ def list_bucket_files():
 
 def upload_file(file, filename):
 
+    """
+    Upload a file to AWS S3 and store its metadata in PostgreSQL.
+    """
+
     s3_client.upload_fileobj(
         file,
         BUCKET_NAME,
