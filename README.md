@@ -48,7 +48,7 @@ app/
 
 ---
 
-# 🏗️ Architecture
+# Architecture
 
 ```text
                     +------------------+
