@@ -28,4 +28,8 @@ jobs:
           pip install pytest
 
       - name: Run tests
-        run: python -m pytest
+  	env:
+    	  SECRET_KEY: test-secret-key-for-ci
+    	  ALGORITHM: HS256
+    	  ACCESS_TOKEN_EXPIRE_MINUTES: 30
+  	run: python -m pytest
