@@ -33,3 +33,6 @@ jobs:
           ALGORITHM: HS256
           ACCESS_TOKEN_EXPIRE_MINUTES: 30
         run: python -m pytest
+
+      - name: Build Docker image
+        run: docker build -t cloudbox:test .
